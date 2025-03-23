@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,14 +15,7 @@ namespace tpmodul6_103022330150
 
         public SayaTubeVideo(string title)
         {
-            if (string.IsNullOrEmpty(title))
-            {
-                throw new ArgumentException("Title cannot be null or empty");
-            }
-            if (title.Length > 100)
-            {
-                throw new ArgumentException("Title length cannot exceed 100 characters");
-            }
+            Debug.Assert(!string.IsNullOrEmpty(title) && title.Length <= 100, "Title cannot be null or exceed 100 characters");
 
             Random random = new Random();
             this.id = random.Next(10000, 99999);
@@ -31,11 +25,19 @@ namespace tpmodul6_103022330150
 
         public void IncreasePlayCount(int count)
         {
-            if (count < 0)
+            Debug.Assert(count > 0 && count <= 10000000, "Play count increment must be between 1 and 10,000,000");
+
+            try
             {
-                throw new ArgumentException("Play count increment cannot be negative");
+                checked
+                {
+                    playCount += count;
+                }
             }
-            playCount += count;
+            catch (OverflowException)
+            {
+                Console.WriteLine("Error: Play count exceeded the maximum limit!");
+            }
         }
 
         public void PrintVideoDetails()
